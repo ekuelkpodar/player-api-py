@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Fetch Player by ID</h2>
+<form id="fetch-by-id-form">
+    <div class="form-group">
+        <label for="player-id">Player ID:</label>
+        <input type="number" class="form-control" id="player-id" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Fetch Player</button>
+</form>
+<div id="player-info" class="mt-4">
+    <!-- Player info will be displayed here -->
+</div>
+
+<script>
+    document.getElementById('fetch-by-id-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const playerId = document.getElementById('player-id').value;
+        fetch(`/api/players/${playerId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Player not found');
+            })
+            .then(player => {
+                const playerInfo = `<h3>Player Information</h3>
+                <p><strong>ID:</strong> ${player.id}</p>
+                <p><strong>First Name:</strong> ${player.first_name}</p>
+                <p><strong>Last Name:</strong> ${player.last_name}</p>
+                <p><strong>Team:</strong> ${player.team}</p>
+                <p><strong>Position:</strong> ${player.position}</p>`;
+                document.getElementById('player-info').innerHTML = playerInfo;
+            })
+            .catch(error => {
+                document.getElementById('player-info').innerHTML = `<p class="text-danger">${error.message}</p>`;
+            });
+    });
+</script>
+{% endblock %}
